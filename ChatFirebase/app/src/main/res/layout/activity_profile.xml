@@ -61,21 +61,6 @@
         android:layout_marginLeft="60dp"
         android:layout_marginRight="60dp"/>
 
-    <TextView
-        android:id="@+id/profile_totalFriends"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Total Friends"
-        android:textColor="@android:color/white"
-        android:textSize="16dp"
-        android:layout_above="@+id/profile_sendReq_btn"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="60dp"
-        android:layout_marginRight="60dp"/>
-
     <Button
         android:id="@+id/profile_declineRequest_btn"
         android:layout_width="match_parent"

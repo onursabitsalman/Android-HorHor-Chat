@@ -34,14 +34,14 @@ public class UsersActivity extends AppCompatActivity {
 
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        //Bu recycler view bildigin list view gibi ama daha kullanışlı android 5.0 dan sonra gelmiş hocada çalışmayabilir
+        //Bu recycler view bildigin list view gibi ama daha kullanışlı android 5.0 dan sonra gelmiş başka aygıtta çalışmayabilir
         mUsersList = (RecyclerView) findViewById(R.id.users_list);
         mUsersList.setHasFixedSize(true);
         mUsersList.setLayoutManager(new LinearLayoutManager(this));
 
     }
 
-    //Buralar karışık
+
     @Override
     protected void onStart() {
         super.onStart();

@@ -3,6 +3,7 @@ package com.example.dolby.chatfirebase;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.icu.text.DateFormat;
+import android.icu.text.SimpleDateFormat;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,10 +28,11 @@ import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private TextView mProfileName,mProfileStatus,mProfileFriendsCount;
+    private TextView mProfileName,mProfileStatus;
     private Button mProfileSendReqBtn,mProfileDeclineBtn;
 
     private DatabaseReference mUsersDatabase;
@@ -40,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
     private ProgressDialog mProgressDialog;
 
     private FirebaseUser mCurrent_user;
+
 
     private String current_state;
 
@@ -57,7 +60,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         mProfileName = (TextView) findViewById(R.id.profile_displayName);
         mProfileStatus = (TextView) findViewById(R.id.profile_status);
-        mProfileFriendsCount = (TextView) findViewById(R.id.profile_totalFriends);
         mProfileSendReqBtn = (Button) findViewById(R.id.profile_sendReq_btn);
         mProfileDeclineBtn = (Button) findViewById(R.id.profile_declineRequest_btn);
 
@@ -78,6 +80,9 @@ public class ProfileActivity extends AppCompatActivity {
 
                 mProfileName.setText(displayName);
                 mProfileStatus.setText(status);
+
+                mProfileDeclineBtn.setVisibility(View.INVISIBLE);
+                mProfileDeclineBtn.setEnabled(false);
 
                 if (mCurrent_user.getUid().equals(user_id)){
                     current_state = "your_profile";
@@ -234,16 +239,20 @@ public class ProfileActivity extends AppCompatActivity {
 
                     Calendar calendar = Calendar.getInstance();
                     Date date = calendar.getTime();
-                    final String currentDate = String.valueOf(date);
+
+
+                    final String currentDate = String.valueOf(date.getDate());
+                    final String currentMonth= String.valueOf(date.getMonth());
+                    final String currentYear= String.valueOf(date.getYear());
 
                     //set value
-                    mFriendDatabase.child(mCurrent_user.getUid()).child(user_id).setValue(currentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    mFriendDatabase.child(mCurrent_user.getUid()).child(user_id).child("date").setValue(currentDate+"-"+currentMonth+"-"+currentYear).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
 
                                 //set value
-                                mFriendDatabase.child(user_id).child(mCurrent_user.getUid()).setValue(currentDate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                mFriendDatabase.child(user_id).child(mCurrent_user.getUid()).child("date").setValue(currentDate+"-"+currentMonth+"-"+currentYear).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()){
@@ -266,6 +275,9 @@ public class ProfileActivity extends AppCompatActivity {
 
                                                                     mProfileDeclineBtn.setVisibility(View.INVISIBLE);
                                                                     mProfileDeclineBtn.setEnabled(false);
+                                                                    Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
+                                                                    startActivity(intent);
+
 
                                                                 }
                                                             }
@@ -282,6 +294,36 @@ public class ProfileActivity extends AppCompatActivity {
                     });
 
                 }
+            }
+        });
+
+
+        mProfileDeclineBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mFriendReqDatabase.child(mCurrent_user.getUid()).child(user_id).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            mFriendReqDatabase.child(user_id).child(mCurrent_user.getUid()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+
+                                        mProfileSendReqBtn.setEnabled(true);
+                                        current_state = "not_friends";
+                                        mProfileSendReqBtn.setText("Send Friend Request");
+
+                                        mProfileDeclineBtn.setVisibility(View.INVISIBLE);
+                                        mProfileDeclineBtn.setEnabled(false);
+
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
             }
         });
 

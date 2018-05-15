@@ -109,7 +109,7 @@ public class RegisterActivity extends AppCompatActivity {
                     //Bu hash map ile
                     HashMap<String,String> userMap = new HashMap<>();
                     userMap.put("name", display_name);
-                    userMap.put("status","Hi gapcuk I am Onur");
+                    userMap.put("status","Hi, I am using HorHor");
 
                     mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
